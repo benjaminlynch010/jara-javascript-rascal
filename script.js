@@ -50,6 +50,7 @@ const products = [
 
 
 function start() {
+	console.log("in <start>")
 	// Run the function to calculate product discounts
 	calculateProductDiscounts(products);
 }
@@ -57,11 +58,12 @@ function start() {
 // Takes in an array of products objects, calculates the
 // discount for each product, and renders the results to the DOM.
 function calculateProductDiscounts(arrayOfProducts) {
+	console.log("in <calculateProductDiscounts>");
 	// Loop through the array of products
 	for (let i = 0; i < arrayOfProducts.length; i++) {
 		// "i" just can't find a single product...
-		const product = arrayOfProducts;
-
+		const product = arrayOfProducts[i];
+		// console.log("product object is:", product);
 		// Calculate the discount for this one product object
 		const discount = calculateDiscount(product);
 
@@ -75,35 +77,37 @@ function calculateProductDiscounts(arrayOfProducts) {
 function calculateDiscount(product) {
 	// Get a discount percentage, based on the product review
 	let reviewDiscount = getReviewDiscount(product); 
-	
+	// console.log("in <reviewDiscount>:", reviewDiscount);
 	// Get a discount percentage, based on the year the product was posted
-	let yearAdjustment = getYearAdjustment(product.yearposted);
-
+	let yearAdjustment = getYearAdjustment(product.yearPosted);
+	// console.log("year adjustment:", yearAdjustment);
 	// Get a discount percentage, based on the product price
 	let priceAdjustment = getPriceAdjustment(product.price);
-
+	// console.log("in <getPriceAdjustment>:", priceAdjustment);
 	// Add all the discount percentages up, to get a total discount percentage
 	let discountPercent = reviewDiscount + yearAdjustment + priceAdjustment;
-
+	console.log("discount percent:", discountPercent);
 	// The discount cannot be more than 25%, or less that 0%
-	if (discountPercent < 0.25) {
+	if (discountPercent > 0.25) {
 		discountPercent = 0.25;
-	} else if (discountPercent > 0) {
+	} else if (discountPercent < 0) {
 		discountPercent = 0;
 	}
-
+	console.log("discount percent", discountPercent);
 	// Convert the percentage to an actual dollar amount
-	let discountAmount = product.price * percent;
+	let discountAmount = product.price * discountPercent;
+	console.log("discount amount:", discountAmount)
 
 	return discountAmount;
 }
 
 // We'll give a bigger discount for lower rated products
 function getReviewDiscount(product) {
-	let discount;
-
+	console.log("in <getReviewDiscount>");
+	let discount = 0;
+	console.log(product.reviews.avgRating);
 	// 1, 2, or 3, you can't catch me!
-	if (product.reviews.avgRating = 5) {
+	if (product.reviews.avgRating == 5) {
 		// perfect rating 🏆, no discount
 		discount = 0;
 	}
@@ -125,24 +129,26 @@ function getReviewDiscount(product) {
 	if (product.reviews.count < 100) {
 		discount += 0.10;
 	}
-
+	console.log("discount is:", discount);
+	return discount;
 	// no discount for you!
 }
 
 // Old products get an extra 10% discount
 function getYearAdjustment(yearPosted) {
+	console.log("year:", yearPosted);
 	if (yearPosted < 2010) {
-		return "0.10";
+		return 0.1;
 	}
-	return "0";
+	return 0;
 }
 
 // Expensive products get an extra 8% discount
 function getPriceAdjustment(price) {
 	if (price > 30) {
-		return "0.08";
+		return 0.08;
 	}
-	return "0";
+	return 0;
 }
 
 // Render a <tr> element to the DOM for a product
